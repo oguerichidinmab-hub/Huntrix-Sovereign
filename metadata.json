@@ -1,0 +1,7 @@
+{
+  "name": "Huntrix Sovereign",
+  "description": "A comprehensive student support app focusing on academic success, mental stability, and financial security, while preparing students for long-term career readiness.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
