@@ -27,8 +27,7 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'internship',
     description: 'Help build modern web applications using React and Tailwind CSS.',
     eligibility: 'CS students or self-taught developers with a portfolio.',
-    category: 'tech',
-    applicationUrl: 'https://techflow.solutions/careers/junior-dev'
+    category: 'tech'
   },
   {
     id: '2',
@@ -48,8 +47,7 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'freelance',
     description: 'Design logos and marketing materials for various clients.',
     eligibility: 'Proficiency in Adobe Creative Suite or Figma.',
-    category: 'design',
-    applicationUrl: 'https://brandmasters.design/gigs'
+    category: 'design'
   },
   {
     id: '4',
@@ -59,8 +57,7 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'remote',
     description: 'Provide support to our global customer base via chat and email.',
     eligibility: 'Good communication skills and problem-solving ability.',
-    category: 'support',
-    applicationUrl: 'https://quickhelp.com/jobs'
+    category: 'support'
   },
   {
     id: '5',
@@ -70,8 +67,7 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'entry-level',
     description: 'Full tuition coverage for high-achieving STEM students.',
     eligibility: 'GPA 3.5+ and active community involvement.',
-    category: 'scholarship',
-    applicationUrl: 'https://futureleaders.org/scholarships'
+    category: 'scholarship'
   },
   {
     id: '6',

@@ -30,8 +30,7 @@ const UNI_ABUJA_JOBS: StudentJob[] = [
     description: 'Assist in organizing books and helping students find resources.',
     eligibility: 'Current student with good organizational skills.',
     category: 'on-campus',
-    estimatedHours: '10-15 hrs/week',
-    applicationUrl: 'https://uniabuja.edu.ng/library/careers'
+    estimatedHours: '10-15 hrs/week'
   },
   {
     id: '2',
@@ -42,8 +41,7 @@ const UNI_ABUJA_JOBS: StudentJob[] = [
     description: 'Monitor lab usage and assist students with basic technical issues.',
     eligibility: 'Basic computer knowledge required.',
     category: 'on-campus',
-    estimatedHours: '8-12 hrs/week',
-    applicationUrl: 'https://uniabuja.edu.ng/ict/jobs'
+    estimatedHours: '8-12 hrs/week'
   },
   {
     id: '3',
@@ -65,8 +63,7 @@ const UNI_ABUJA_JOBS: StudentJob[] = [
     description: 'Manage social media accounts for a local small business.',
     eligibility: 'Experience with Instagram and Twitter.',
     category: 'remote',
-    estimatedHours: '5-10 hrs/week',
-    applicationUrl: 'https://abujacreatives.com/apply'
+    estimatedHours: '5-10 hrs/week'
   },
   {
     id: '5',
