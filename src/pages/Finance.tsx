@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 import { 
   Wallet, 
   TrendingUp, 
@@ -168,9 +169,9 @@ export default function Finance() {
       <section>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Recent Activity</h2>
-          <button className="text-emerald-600 text-[10px] font-black uppercase tracking-widest flex items-center">
+          <Link to="/transactions" className="text-emerald-600 text-[10px] font-black uppercase tracking-widest flex items-center">
             View All <ArrowRight className="w-3 h-3 ml-1" />
-          </button>
+          </Link>
         </div>
         <div className="space-y-3">
           {transactions.map((t) => (

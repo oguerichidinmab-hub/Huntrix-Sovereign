@@ -154,9 +154,9 @@ export default function Dashboard() {
       <section>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Daily Habits</h2>
-          <button className="text-indigo-600 text-[10px] font-black uppercase tracking-widest flex items-center">
+          <Link to="/habits" className="text-indigo-600 text-[10px] font-black uppercase tracking-widest flex items-center">
             View All <ArrowRight className="w-3 h-3 ml-1" />
-          </button>
+          </Link>
         </div>
         <div className="space-y-3">
           {habits.map((habit) => (

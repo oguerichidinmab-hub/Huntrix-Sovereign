@@ -141,3 +141,11 @@ export interface StudentJob extends JobOpportunity {
   isUniAbuja?: boolean;
   category: 'on-campus' | 'off-campus' | 'remote' | 'skill-based';
 }
+
+export interface AcademicEvent {
+  id: string;
+  title: string;
+  date: string;
+  type: 'holiday' | 'exam' | 'registration' | 'deadline' | 'other';
+  description?: string;
+}

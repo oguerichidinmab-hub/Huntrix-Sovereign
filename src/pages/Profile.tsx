@@ -38,9 +38,9 @@ export default function Profile() {
     <div className="space-y-6 pb-20">
       <header className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-slate-900">Your Profile</h1>
-        <button className="p-2 bg-slate-100 rounded-full text-slate-600">
+        <Link to="/settings" className="p-2 bg-slate-100 rounded-full text-slate-600 hover:bg-slate-200 transition-colors">
           <Settings className="w-5 h-5" />
-        </button>
+        </Link>
       </header>
 
       {/* User Info Card */}

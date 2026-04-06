@@ -27,6 +27,9 @@ import CVBuilder from './pages/CVBuilder';
 import Profile from './pages/Profile';
 import Community from './pages/Community';
 import Timetable from './pages/Timetable';
+import Habits from './pages/Habits';
+import Transactions from './pages/Transactions';
+import Settings from './pages/Settings';
 import Login from './pages/Login';
 
 function NavItem({ to, icon: Icon, label, active }: { to: string, icon: any, label: string, active: boolean }) {
@@ -155,6 +158,9 @@ export default function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/community" element={<Community />} />
               <Route path="/timetable" element={<Timetable />} />
+              <Route path="/habits" element={<Habits />} />
+              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="/login" element={<Navigate to="/" replace />} />
             </>
           )}
