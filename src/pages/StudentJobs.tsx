@@ -15,7 +15,9 @@ import {
   Monitor,
   CheckCircle2,
   X,
-  FileText
+  FileText,
+  Upload,
+  Paperclip
 } from 'lucide-react';
 import { auth } from '../firebase';
 import { StudentJob } from '../types';
@@ -95,6 +97,13 @@ export default function StudentJobs() {
   const [applyingId, setApplyingId] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showForm, setShowForm] = useState<StudentJob | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
 
   const handleApply = (job: StudentJob) => {
     if (job.applicationUrl) {
@@ -112,6 +121,7 @@ export default function StudentJobs() {
     setTimeout(() => {
       setApplyingId(null);
       setShowForm(null);
+      setSelectedFile(null);
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     }, 1500);
@@ -204,10 +214,47 @@ export default function StudentJobs() {
                       placeholder="Tell them about your skills and availability..."
                     />
                   </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Upload CV (Optional)</label>
+                    <div className="relative">
+                      <input 
+                        type="file" 
+                        id="cv-upload"
+                        className="hidden" 
+                        accept=".pdf,.doc,.docx"
+                        onChange={handleFileChange}
+                      />
+                      <label 
+                        htmlFor="cv-upload"
+                        className="flex items-center justify-between w-full bg-slate-50 border border-dashed border-slate-200 rounded-2xl px-4 py-3 text-sm cursor-pointer hover:bg-slate-100 transition-colors"
+                      >
+                        <div className="flex items-center space-x-2 text-slate-500">
+                          <Upload className="w-4 h-4" />
+                          <span className="truncate max-w-[200px]">
+                            {selectedFile ? selectedFile.name : 'Choose a file...'}
+                          </span>
+                        </div>
+                        {selectedFile && (
+                          <button 
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSelectedFile(null);
+                            }}
+                            className="p-1 hover:bg-slate-200 rounded-full"
+                          >
+                            <X className="w-3 h-3 text-slate-400" />
+                          </button>
+                        )}
+                      </label>
+                    </div>
+                    <p className="text-[10px] text-slate-400 ml-1">Accepted formats: PDF, DOC, DOCX (Max 5MB)</p>
+                  </div>
+
                   <div className="bg-indigo-50 p-4 rounded-2xl flex items-start space-x-3">
-                    <FileText className="w-5 h-5 text-indigo-600 shrink-0" />
+                    <Paperclip className="w-5 h-5 text-indigo-600 shrink-0" />
                     <p className="text-[10px] text-indigo-600 font-bold leading-relaxed">
-                      Your CV from the CV Builder will be automatically attached to this application.
+                      {selectedFile ? 'Your uploaded CV will be sent.' : 'No file uploaded? Your Hub CV will be used instead.'}
                     </p>
                   </div>
                   <button 
