@@ -16,8 +16,10 @@ import {
 } from 'lucide-react';
 import { Habit, MoodEntry } from '../types';
 import { generateRoutine } from '../services/geminiService';
+import { auth } from '../firebase';
 
 export default function Dashboard() {
+  const user = auth.currentUser;
   const [mood, setMood] = useState<MoodEntry | null>(null);
   const [habits, setHabits] = useState<Habit[]>([
     { id: '1', title: 'Morning Study Session', category: 'academic', completed: false, streak: 5 },
@@ -51,11 +53,17 @@ export default function Dashboard() {
     <div className="space-y-6 pb-20">
       <header className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Hello, Chidinma</h1>
-          <p className="text-slate-500 text-sm">Thursday, March 19</p>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Hello, {user?.displayName?.split(' ')[0] || 'Student'}</h1>
+          <p className="text-slate-500 text-xs font-medium">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+          </p>
         </div>
-        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
-          OC
+        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold overflow-hidden border-2 border-white shadow-sm">
+          {user?.photoURL ? (
+            <img src={user.photoURL} alt={user.displayName || 'User'} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+          ) : (
+            user?.displayName?.charAt(0) || 'S'
+          )}
         </div>
       </header>
 
@@ -222,6 +230,12 @@ export default function Dashboard() {
         <div className="absolute top-[-20%] right-[-10%] w-40 h-40 bg-indigo-600/20 rounded-full blur-3xl" />
         <div className="absolute bottom-[-20%] left-[-10%] w-40 h-40 bg-purple-600/20 rounded-full blur-3xl" />
       </section>
+
+      <div className="text-center pt-4 pb-8">
+        <p className="text-[10px] text-indigo-600 font-black uppercase tracking-[0.2em]">
+          Created by Team Mauntra
+        </p>
+      </div>
     </div>
   );
 }

@@ -54,6 +54,7 @@ export interface JobOpportunity {
   description: string;
   eligibility: string;
   category: string;
+  applicationUrl?: string;
 }
 
 export interface CVData {

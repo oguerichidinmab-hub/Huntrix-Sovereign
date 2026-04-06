@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
-  User, 
+  User as UserIcon, 
   Settings, 
   LogOut, 
   Award, 
@@ -13,13 +13,26 @@ import {
   ShieldCheck,
   Zap,
   Calendar,
-  Users
+  Users,
+  AlertTriangle,
+  X
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { auth, logout } from '../firebase';
 
 export default function Profile() {
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const user = auth.currentUser;
   const cvData = JSON.parse(localStorage.getItem('cv_draft') || '{}');
   const cvProgress = cvData.progress || 0;
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <div className="space-y-6 pb-20">
@@ -33,14 +46,19 @@ export default function Profile() {
       {/* User Info Card */}
       <section className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col items-center text-center">
         <div className="relative mb-4">
-          <div className="w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 border-4 border-white shadow-xl">
-            <User className="w-12 h-12" />
+          <div className="w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 border-4 border-white shadow-xl overflow-hidden">
+            {user?.photoURL ? (
+              <img src={user.photoURL} alt={user.displayName || 'User'} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            ) : (
+              <UserIcon className="w-12 h-12" />
+            )}
           </div>
           <div className="absolute bottom-0 right-0 w-8 h-8 bg-emerald-500 rounded-full border-4 border-white flex items-center justify-center text-white">
             <ShieldCheck className="w-4 h-4" />
           </div>
         </div>
-        <h2 className="text-xl font-black text-slate-900 tracking-tight">Chidinma Ogueri</h2>
+        <h2 className="text-xl font-black text-slate-900 tracking-tight">{user?.displayName || 'Student User'}</h2>
+        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{user?.email}</p>
         <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Computer Science • Year 3</p>
         
         <div className="flex space-x-3 w-full">
@@ -138,10 +156,70 @@ export default function Profile() {
       </section>
 
       {/* Logout */}
-      <button className="w-full py-4 bg-rose-50 text-rose-600 rounded-2xl font-bold flex items-center justify-center border border-rose-100 mt-4">
+      <button 
+        onClick={() => setShowLogoutConfirm(true)}
+        className="w-full py-4 bg-rose-50 text-rose-600 rounded-2xl font-bold flex items-center justify-center border border-rose-100 mt-4 active:scale-95 transition-all"
+      >
         <LogOut className="w-5 h-5 mr-2" />
         Log Out
       </button>
+
+      <div className="text-center pt-8 pb-4">
+        <p className="text-[10px] text-indigo-600 font-black uppercase tracking-[0.2em]">
+          Created by Team Mauntra
+        </p>
+      </div>
+
+      {/* Logout Confirmation Modal */}
+      <AnimatePresence>
+        {showLogoutConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowLogoutConfirm(false)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-xs bg-white rounded-[2.5rem] p-8 shadow-2xl overflow-hidden"
+            >
+              <div className="absolute top-0 left-0 w-full h-2 bg-rose-500" />
+              
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500">
+                  <AlertTriangle className="w-8 h-8" />
+                </div>
+                
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-slate-900 tracking-tight">Wait, leaving?</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    Are you sure you want to log out of your student hub?
+                  </p>
+                </div>
+
+                <div className="w-full space-y-3 pt-2">
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full py-4 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-rose-100"
+                  >
+                    Yes, Log Me Out
+                  </button>
+                  <button 
+                    onClick={() => setShowLogoutConfirm(false)}
+                    className="w-full py-4 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-2xl font-bold transition-all active:scale-95"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

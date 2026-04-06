@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Heart, 
@@ -13,8 +13,11 @@ import {
   BookOpen,
   Zap,
   FileText,
-  Calendar
+  Calendar,
+  Loader2
 } from 'lucide-react';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { auth } from './firebase';
 import Dashboard from './pages/Dashboard';
 import Wellness from './pages/Wellness';
 import Finance from './pages/Finance';
@@ -24,6 +27,7 @@ import CVBuilder from './pages/CVBuilder';
 import Profile from './pages/Profile';
 import Community from './pages/Community';
 import Timetable from './pages/Timetable';
+import Login from './pages/Login';
 
 function NavItem({ to, icon: Icon, label, active }: { to: string, icon: any, label: string, active: boolean }) {
   return (
@@ -43,9 +47,11 @@ function NavItem({ to, icon: Icon, label, active }: { to: string, icon: any, lab
   );
 }
 
-function Layout({ children }: { children: React.ReactNode }) {
+function Layout({ children, user }: { children: React.ReactNode, user: FirebaseUser | null }) {
   const location = useLocation();
   
+  if (!user) return <>{children}</>;
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col max-w-md mx-auto relative shadow-2xl shadow-slate-200">
       {/* Top Header */}
@@ -110,19 +116,48 @@ function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <Router>
-      <Layout>
+      <Layout user={user}>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/academics" element={<Academics />} />
-          <Route path="/wellness" element={<Wellness />} />
-          <Route path="/finance" element={<Finance />} />
-          <Route path="/student-jobs" element={<StudentJobs />} />
-          <Route path="/cv-builder" element={<CVBuilder />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/community" element={<Community />} />
-          <Route path="/timetable" element={<Timetable />} />
+          {!user ? (
+            <>
+              <Route path="/login" element={<Login />} />
+              <Route path="*" element={<Navigate to="/login" replace />} />
+            </>
+          ) : (
+            <>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/academics" element={<Academics />} />
+              <Route path="/wellness" element={<Wellness />} />
+              <Route path="/finance" element={<Finance />} />
+              <Route path="/student-jobs" element={<StudentJobs />} />
+              <Route path="/cv-builder" element={<CVBuilder />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="/timetable" element={<Timetable />} />
+              <Route path="/login" element={<Navigate to="/" replace />} />
+            </>
+          )}
         </Routes>
       </Layout>
     </Router>

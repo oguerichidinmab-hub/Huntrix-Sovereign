@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { 
   Search, 
@@ -11,8 +11,11 @@ import {
   ArrowRight, 
   GraduationCap, 
   Zap,
-  CheckCircle2
+  CheckCircle2,
+  X,
+  FileText
 } from 'lucide-react';
+import { auth } from '../firebase';
 import { JobOpportunity } from '../types';
 
 const MOCK_OPPORTUNITIES: JobOpportunity[] = [
@@ -24,7 +27,8 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'internship',
     description: 'Help build modern web applications using React and Tailwind CSS.',
     eligibility: 'CS students or self-taught developers with a portfolio.',
-    category: 'tech'
+    category: 'tech',
+    applicationUrl: 'https://techflow.solutions/careers/junior-dev'
   },
   {
     id: '2',
@@ -44,7 +48,8 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'freelance',
     description: 'Design logos and marketing materials for various clients.',
     eligibility: 'Proficiency in Adobe Creative Suite or Figma.',
-    category: 'design'
+    category: 'design',
+    applicationUrl: 'https://brandmasters.design/gigs'
   },
   {
     id: '4',
@@ -54,7 +59,8 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'remote',
     description: 'Provide support to our global customer base via chat and email.',
     eligibility: 'Good communication skills and problem-solving ability.',
-    category: 'support'
+    category: 'support',
+    applicationUrl: 'https://quickhelp.com/jobs'
   },
   {
     id: '5',
@@ -64,7 +70,8 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'entry-level',
     description: 'Full tuition coverage for high-achieving STEM students.',
     eligibility: 'GPA 3.5+ and active community involvement.',
-    category: 'scholarship'
+    category: 'scholarship',
+    applicationUrl: 'https://futureleaders.org/scholarships'
   },
   {
     id: '6',
@@ -81,6 +88,30 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
 export default function Opportunities() {
   const [filter, setFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [applyingId, setApplyingId] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showForm, setShowForm] = useState<JobOpportunity | null>(null);
+
+  const handleApply = (op: JobOpportunity) => {
+    if (op.applicationUrl) {
+      window.open(op.applicationUrl, '_blank');
+      return;
+    }
+    setShowForm(op);
+  };
+
+  const submitApplication = (e: React.FormEvent) => {
+    e.preventDefault();
+    setApplyingId(showForm?.id || null);
+    
+    // Simulate API call
+    setTimeout(() => {
+      setApplyingId(null);
+      setShowForm(null);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    }, 1500);
+  };
 
   const filteredOpportunities = MOCK_OPPORTUNITIES.filter(op => {
     const matchesFilter = filter === 'all' || op.type === filter || op.category === filter;
@@ -90,7 +121,105 @@ export default function Opportunities() {
   });
 
   return (
-    <div className="space-y-6 pb-20">
+    <div className="space-y-6 pb-20 relative">
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-24 left-6 right-6 z-50 bg-emerald-600 text-white p-4 rounded-2xl shadow-xl flex items-center justify-between"
+          >
+            <div className="flex items-center space-x-3">
+              <CheckCircle2 className="w-5 h-5" />
+              <span className="text-xs font-bold uppercase tracking-widest">Application Sent Successfully!</span>
+            </div>
+            <button onClick={() => setShowSuccess(false)}>
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Application Form Modal */}
+      <AnimatePresence>
+        {showForm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowForm(null)}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-md bg-white rounded-[2.5rem] p-8 shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+            >
+              <div className="absolute top-0 left-0 w-full h-2 bg-indigo-600" />
+              <button 
+                onClick={() => setShowForm(null)}
+                className="absolute top-6 right-6 p-2 bg-slate-100 rounded-full text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="space-y-6">
+                <header className="text-center">
+                  <h3 className="text-xl font-bold text-slate-900 tracking-tight">Apply for {showForm.title}</h3>
+                  <p className="text-sm text-slate-500">{showForm.company}</p>
+                </header>
+
+                <form onSubmit={submitApplication} className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+                    <input 
+                      required
+                      type="text" 
+                      defaultValue={auth.currentUser?.displayName || ''}
+                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
+                    <input 
+                      required
+                      type="email" 
+                      defaultValue={auth.currentUser?.email || ''}
+                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Why are you a good fit?</label>
+                    <textarea 
+                      required
+                      rows={4}
+                      className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                      placeholder="Tell them about your skills and availability..."
+                    />
+                  </div>
+                  <div className="bg-indigo-50 p-4 rounded-2xl flex items-start space-x-3">
+                    <FileText className="w-5 h-5 text-indigo-600 shrink-0" />
+                    <p className="text-[10px] text-indigo-600 font-bold leading-relaxed">
+                      Your CV from the CV Builder will be automatically attached to this application.
+                    </p>
+                  </div>
+                  <button 
+                    type="submit"
+                    disabled={applyingId === showForm.id}
+                    className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-indigo-100 flex items-center justify-center disabled:opacity-50"
+                  >
+                    {applyingId === showForm.id ? 'Sending...' : 'Submit Application'}
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <header>
         <h1 className="text-2xl font-bold text-slate-900">Opportunities</h1>
         <p className="text-slate-500 text-sm">Find jobs, internships, and scholarships.</p>
@@ -184,8 +313,11 @@ export default function Opportunities() {
             </div>
             
             <div className="flex items-center space-x-3">
-              <button className="flex-1 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-100 flex items-center justify-center group-hover:bg-indigo-700 transition-colors">
-                Apply Now
+              <button 
+                onClick={() => handleApply(op)}
+                className="flex-1 py-3 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-100 flex items-center justify-center group-hover:bg-indigo-700 transition-colors"
+              >
+                {op.applicationUrl ? 'Apply on Website' : 'Apply Now'}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </button>
               <button className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:text-indigo-600 transition-colors">
