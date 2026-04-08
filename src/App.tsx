@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   LayoutDashboard, 
   Heart, 
@@ -33,6 +34,7 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 import WellnessFAB from './components/WellnessFAB';
 import Logo from './components/Logo';
+import SplashScreen from './components/SplashScreen';
 
 function NavItem({ to, icon: Icon, label, active }: { to: string, icon: any, label: string, active: boolean }) {
   return (
@@ -120,20 +122,26 @@ function Layout({ children, user }: { children: React.ReactNode, user: FirebaseU
 export default function App() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
+      
+      // Hide splash after a minimum duration
+      setTimeout(() => {
+        setShowSplash(false);
+      }, 2500);
     });
     return () => unsubscribe();
   }, []);
 
-  if (loading) {
+  if (loading || showSplash) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
-      </div>
+      <AnimatePresence>
+        {showSplash && <SplashScreen />}
+      </AnimatePresence>
     );
   }
 
