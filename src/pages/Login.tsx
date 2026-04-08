@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { LogIn, ShieldCheck, Mail, Lock, User, ArrowRight, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { loginWithGoogle, loginWithEmail, signUpWithEmail, resetPassword } from '../firebase';
+import Logo from '../components/Logo';
 
 export default function Login() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -42,13 +43,8 @@ export default function Login() {
         className="w-full max-w-sm space-y-8"
       >
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-xl shadow-indigo-100">
-            <span className="text-white font-black text-3xl">H</span>
-          </div>
-          <div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">HUNTRIX</h1>
-            <p className="text-slate-500 font-medium">Empowering Student Success</p>
-          </div>
+          <Logo size="lg" className="flex-col space-x-0 space-y-4" />
+          <p className="text-slate-500 font-medium">Empowering Student Success</p>
         </div>
 
         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 space-y-6">

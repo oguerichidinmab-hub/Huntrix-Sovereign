@@ -32,6 +32,7 @@ import Transactions from './pages/Transactions';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import WellnessFAB from './components/WellnessFAB';
+import Logo from './components/Logo';
 
 function NavItem({ to, icon: Icon, label, active }: { to: string, icon: any, label: string, active: boolean }) {
   return (
@@ -60,12 +61,7 @@ function Layout({ children, user }: { children: React.ReactNode, user: FirebaseU
     <div className="min-h-screen bg-slate-50 flex flex-col max-w-md mx-auto relative shadow-2xl shadow-slate-200">
       {/* Top Header */}
       <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-black text-lg">H</span>
-          </div>
-          <span className="font-black text-slate-900 tracking-tight text-lg">HUNTRIX</span>
-        </div>
+        <Logo size="sm" />
         <div className="flex items-center space-x-4">
           <button className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
             <Search className="w-5 h-5" />
