@@ -12,7 +12,11 @@ import {
   Plus,
   ArrowRight,
   Clock,
-  Users
+  Users,
+  Sprout,
+  Leaf,
+  TreeDeciduous,
+  Flower2
 } from 'lucide-react';
 import { Habit, MoodEntry } from '../types';
 import { generateRoutine } from '../services/geminiService';
@@ -28,6 +32,9 @@ export default function Dashboard() {
   ]);
   const [routine, setRoutine] = useState<any[]>([]);
   const [loadingRoutine, setLoadingRoutine] = useState(false);
+
+  const completedHabits = habits.filter(h => h.completed).length;
+  const gardenStage = completedHabits === 0 ? 'seed' : completedHabits === 1 ? 'sprout' : completedHabits === 2 ? 'plant' : 'tree';
 
   const toggleHabit = (id: string) => {
     setHabits(habits.map(h => h.id === id ? { ...h, completed: !h.completed } : h));
@@ -58,14 +65,60 @@ export default function Dashboard() {
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </p>
         </div>
-        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold overflow-hidden border-2 border-white shadow-sm">
+        <Link to="/profile" className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold overflow-hidden border-2 border-white shadow-sm">
           {user?.photoURL ? (
             <img src={user.photoURL} alt={user.displayName || 'User'} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
           ) : (
             user?.displayName?.charAt(0) || 'S'
           )}
-        </div>
+        </Link>
       </header>
+
+      {/* Digital Garden Section */}
+      <section className="bg-emerald-50 p-6 rounded-[2.5rem] border border-emerald-100 relative overflow-hidden">
+        <div className="relative z-10 flex flex-col items-center text-center">
+          <div className="flex items-center space-x-2 mb-4">
+            <Flower2 className="w-4 h-4 text-emerald-600" />
+            <h2 className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">Your Digital Garden</h2>
+          </div>
+          
+          <motion.div 
+            key={gardenStage}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-xl shadow-emerald-200/50 mb-4 border-4 border-emerald-100"
+          >
+            {gardenStage === 'seed' && <div className="w-4 h-4 bg-amber-800 rounded-full animate-bounce" />}
+            {gardenStage === 'sprout' && <Sprout className="w-16 h-16 text-emerald-500 animate-pulse" />}
+            {gardenStage === 'plant' && <Leaf className="w-16 h-16 text-emerald-600 animate-bounce" />}
+            {gardenStage === 'tree' && <TreeDeciduous className="w-20 h-20 text-emerald-700 animate-pulse" />}
+          </motion.div>
+
+          <h3 className="text-lg font-bold text-slate-900 mb-1">
+            {gardenStage === 'seed' ? 'Time to plant!' : 
+             gardenStage === 'sprout' ? 'Your garden is growing!' : 
+             gardenStage === 'plant' ? 'Looking healthy!' : 'A flourishing tree!'}
+          </h3>
+          <p className="text-xs text-slate-500 max-w-[200px]">
+            Complete your daily habits to see your garden flourish.
+          </p>
+          
+          <div className="mt-6 w-full bg-emerald-200/50 h-1.5 rounded-full overflow-hidden">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${(completedHabits / habits.length) * 100}%` }}
+              className="bg-emerald-500 h-full rounded-full"
+            />
+          </div>
+          <p className="text-[10px] font-bold text-emerald-600 mt-2 uppercase tracking-widest">
+            {completedHabits} of {habits.length} habits completed
+          </p>
+        </div>
+        
+        {/* Decorative elements */}
+        <div className="absolute top-[-10%] left-[-10%] w-24 h-24 bg-emerald-200/20 rounded-full blur-2xl" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-32 h-32 bg-emerald-300/20 rounded-full blur-3xl" />
+      </section>
 
       {/* Three Pillars Overview */}
       <section className="grid grid-cols-1 gap-4">

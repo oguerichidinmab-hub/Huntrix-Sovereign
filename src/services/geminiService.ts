@@ -31,6 +31,22 @@ export const generateRoutine = async (userProfile: string, goals: string) => {
   return JSON.parse(response.text);
 };
 
+export const chatWithFriend = async (messages: { role: 'user' | 'model', text: string }[]) => {
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: messages.map(m => ({ role: m.role, parts: [{ text: m.text }] })),
+    config: {
+      systemInstruction: `You are a warm, supportive, and non-judgmental AI friend for a university student. 
+      Your tone should be like a peer, not a doctor or counselor. 
+      Encourage healthy habits, suggest breaks, rest, or talking to real people. 
+      Be empathetic and kind. 
+      Always include a small disclaimer at the very end of your first message: "I'm here to listen, but remember I'm not a professional counselor."`,
+    },
+  });
+
+  return response.text;
+};
+
 export const getWellnessAdvice = async (mood: string, note: string) => {
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",

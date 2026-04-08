@@ -29,7 +29,8 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'internship',
     description: 'Help build modern web applications using React and Tailwind CSS.',
     eligibility: 'CS students or self-taught developers with a portfolio.',
-    category: 'tech'
+    category: 'tech',
+    isVerified: true
   },
   {
     id: '2',
@@ -39,7 +40,8 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'part-time',
     description: 'Create engaging content for our social media and blog.',
     eligibility: 'Excellent writing skills and interest in digital media.',
-    category: 'marketing'
+    category: 'marketing',
+    isVerified: true
   },
   {
     id: '3',
@@ -49,7 +51,8 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'freelance',
     description: 'Design logos and marketing materials for various clients.',
     eligibility: 'Proficiency in Adobe Creative Suite or Figma.',
-    category: 'design'
+    category: 'design',
+    isVerified: false
   },
   {
     id: '4',
@@ -59,7 +62,8 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'remote',
     description: 'Provide support to our global customer base via chat and email.',
     eligibility: 'Good communication skills and problem-solving ability.',
-    category: 'support'
+    category: 'support',
+    isVerified: true
   },
   {
     id: '5',
@@ -69,7 +73,8 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'entry-level',
     description: 'Full tuition coverage for high-achieving STEM students.',
     eligibility: 'GPA 3.5+ and active community involvement.',
-    category: 'scholarship'
+    category: 'scholarship',
+    isVerified: true
   },
   {
     id: '6',
@@ -79,7 +84,8 @@ const MOCK_OPPORTUNITIES: JobOpportunity[] = [
     type: 'part-time',
     description: 'Manage and grow our social media presence.',
     eligibility: 'Experience with social media tools and analytics.',
-    category: 'marketing'
+    category: 'marketing',
+    isVerified: false
   }
 ];
 
@@ -90,10 +96,17 @@ export default function Opportunities() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showForm, setShowForm] = useState<JobOpportunity | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFileError(null);
     if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
+      const file = e.target.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        setFileError('File size exceeds 5MB limit.');
+        return;
+      }
+      setSelectedFile(file);
     }
   };
 
@@ -218,7 +231,7 @@ export default function Opportunities() {
                       />
                       <label 
                         htmlFor="cv-upload"
-                        className="flex items-center justify-between w-full bg-slate-50 border border-dashed border-slate-200 rounded-2xl px-4 py-3 text-sm cursor-pointer hover:bg-slate-100 transition-colors"
+                        className={`flex items-center justify-between w-full bg-slate-50 border border-dashed ${fileError ? 'border-rose-300 bg-rose-50' : 'border-slate-200'} rounded-2xl px-4 py-3 text-sm cursor-pointer hover:bg-slate-100 transition-colors`}
                       >
                         <div className="flex items-center space-x-2 text-slate-500">
                           <Upload className="w-4 h-4" />
@@ -232,6 +245,7 @@ export default function Opportunities() {
                             onClick={(e) => {
                               e.preventDefault();
                               setSelectedFile(null);
+                              setFileError(null);
                             }}
                             className="p-1 hover:bg-slate-200 rounded-full"
                           >
@@ -240,7 +254,11 @@ export default function Opportunities() {
                         )}
                       </label>
                     </div>
-                    <p className="text-[10px] text-slate-400 ml-1">Accepted formats: PDF, DOC, DOCX (Max 5MB)</p>
+                    {fileError ? (
+                      <p className="text-[10px] text-rose-500 ml-1 font-bold">{fileError}</p>
+                    ) : (
+                      <p className="text-[10px] text-slate-400 ml-1">Accepted formats: PDF, DOC, DOCX (Max 5MB)</p>
+                    )}
                   </div>
 
                   <div className="bg-indigo-50 p-4 rounded-2xl flex items-start space-x-3">
@@ -326,7 +344,21 @@ export default function Opportunities() {
                    <Briefcase className="w-6 h-6" />}
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-base">{op.title}</h3>
+                  <div className="flex items-center space-x-2">
+                    <h3 className="font-bold text-slate-900 text-base">{op.title}</h3>
+                    {op.isVerified && (
+                      <div className="group/tooltip relative">
+                        <div className="flex items-center space-x-1 bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded-full border border-emerald-100">
+                          <CheckCircle2 className="w-3 h-3 fill-emerald-50" />
+                          <span className="text-[8px] font-black uppercase tracking-tighter">Verified</span>
+                        </div>
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-[10px] rounded-xl opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-normal w-48 text-center shadow-xl pointer-events-none z-50">
+                          Verified jobs are reviewed and considered safe for students.
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   <p className="text-xs text-slate-500">{op.company}</p>
                 </div>
               </div>

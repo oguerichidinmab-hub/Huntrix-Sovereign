@@ -55,6 +55,7 @@ export interface JobOpportunity {
   eligibility: string;
   category: string;
   applicationUrl?: string;
+  isVerified?: boolean;
 }
 
 export interface CVData {

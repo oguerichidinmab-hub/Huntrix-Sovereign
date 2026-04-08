@@ -31,6 +31,7 @@ import Habits from './pages/Habits';
 import Transactions from './pages/Transactions';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import WellnessFAB from './components/WellnessFAB';
 
 function NavItem({ to, icon: Icon, label, active }: { to: string, icon: any, label: string, active: boolean }) {
   return (
@@ -80,6 +81,8 @@ function Layout({ children, user }: { children: React.ReactNode, user: FirebaseU
       <main className="flex-1 px-6 py-6 overflow-y-auto">
         {children}
       </main>
+
+      <WellnessFAB />
 
       {/* Bottom Navigation */}
       <nav className="sticky bottom-0 z-40 bg-white/90 backdrop-blur-lg border-t border-slate-100 px-2 py-3 flex justify-between items-center safe-area-bottom">
