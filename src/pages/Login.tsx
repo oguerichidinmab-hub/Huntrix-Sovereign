@@ -107,15 +107,6 @@ export default function Login() {
               <div className="space-y-1">
                 <div className="flex justify-between items-center ml-1">
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Password</label>
-                  {!isSignUp && (
-                    <button 
-                      type="button"
-                      onClick={() => setIsForgotPassword(true)}
-                      className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest hover:underline"
-                    >
-                      Forgot?
-                    </button>
-                  )}
                 </div>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -147,6 +138,18 @@ export default function Login() {
               {loading ? 'Processing...' : (isForgotPassword ? 'Send Reset Link' : (isSignUp ? 'Create Account' : 'Sign In'))}
               <ArrowRight className="w-4 h-4 ml-2" />
             </button>
+
+            {!isSignUp && !isForgotPassword && (
+              <div className="text-center">
+                <button 
+                  type="button"
+                  onClick={() => setIsForgotPassword(true)}
+                  className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-indigo-600 transition-colors"
+                >
+                  Forgot your password?
+                </button>
+              </div>
+            )}
           </form>
 
           {isForgotPassword ? (
