@@ -56,8 +56,17 @@ function NavItem({ to, icon: Icon, label, active }: { to: string, icon: any, lab
 
 function Layout({ children, user }: { children: React.ReactNode, user: FirebaseUser | null }) {
   const location = useLocation();
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [hasUnreadNotifications, setHasUnreadNotifications] = useState(true);
   
   if (!user) return <>{children}</>;
+
+  const handleNotificationClick = () => {
+    setShowNotifications(!showNotifications);
+    if (!showNotifications) {
+      setHasUnreadNotifications(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col max-w-md mx-auto relative shadow-2xl shadow-slate-200">
@@ -65,13 +74,35 @@ function Layout({ children, user }: { children: React.ReactNode, user: FirebaseU
       <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4 flex justify-between items-center">
         <Logo size="sm" />
         <div className="flex items-center space-x-4">
-          <button className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
-            <Search className="w-5 h-5" />
-          </button>
-          <button className="p-2 text-slate-400 hover:text-slate-600 transition-colors relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
-          </button>
+          <div className="relative">
+            <button 
+              onClick={handleNotificationClick}
+              className="p-2 text-slate-400 hover:text-slate-600 transition-colors relative"
+            >
+              <Bell className="w-5 h-5" />
+              {hasUnreadNotifications && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
+              )}
+            </button>
+            
+            <AnimatePresence>
+              {showNotifications && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden z-50"
+                >
+                  <div className="p-4 border-b border-slate-100">
+                    <h3 className="font-bold text-slate-900 text-sm">Notifications</h3>
+                  </div>
+                  <div className="p-4 text-center">
+                    <p className="text-xs text-slate-500">No new notifications</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 

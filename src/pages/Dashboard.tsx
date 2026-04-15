@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { 
   Calendar, 
@@ -24,6 +24,7 @@ import { auth } from '../firebase';
 
 export default function Dashboard() {
   const user = auth.currentUser;
+  const [showWelcome, setShowWelcome] = useState(false);
   const [mood, setMood] = useState<MoodEntry | null>(null);
   const [habits, setHabits] = useState<Habit[]>([
     { id: '1', title: 'Morning Study Session', category: 'academic', completed: false, streak: 5 },
@@ -32,6 +33,19 @@ export default function Dashboard() {
   ]);
   const [routine, setRoutine] = useState<any[]>([]);
   const [loadingRoutine, setLoadingRoutine] = useState(false);
+
+  useEffect(() => {
+    // Check if user is new (created in the last 2 minutes)
+    if (user?.metadata.creationTime) {
+      const created = new Date(user.metadata.creationTime).getTime();
+      const now = new Date().getTime();
+      if (now - created < 120000) { // 2 minutes
+        setShowWelcome(true);
+        const timer = setTimeout(() => setShowWelcome(false), 5000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [user]);
 
   const completedHabits = habits.filter(h => h.completed).length;
   const gardenStage = completedHabits === 0 ? 'seed' : completedHabits === 1 ? 'sprout' : completedHabits === 2 ? 'plant' : 'tree';
@@ -58,6 +72,25 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 pb-20">
+      <AnimatePresence>
+        {showWelcome && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-20 left-6 right-6 z-50 bg-indigo-600 text-white p-4 rounded-2xl shadow-xl flex items-center space-x-3 border border-indigo-400"
+          >
+            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+              <Plus className="w-6 h-6" />
+            </div>
+            <div>
+              <h4 className="font-bold text-sm">Welcome to Huntrix!</h4>
+              <p className="text-[10px] text-indigo-100">We're excited to help you succeed.</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <header className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Hello, {user?.displayName?.split(' ')[0] || 'Student'}</h1>
@@ -177,30 +210,6 @@ export default function Dashboard() {
           </div>
           <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-emerald-600 transition-colors" />
         </Link>
-      </section>
-
-      {/* Career Readiness Card */}
-      <section className="bg-indigo-600 p-6 rounded-3xl text-white shadow-xl shadow-indigo-100 relative overflow-hidden">
-        <div className="relative z-10">
-          <div className="flex items-center space-x-2 mb-1">
-            <CheckCircle2 className="w-4 h-4 text-indigo-200" />
-            <span className="text-[10px] font-bold text-indigo-200 uppercase tracking-widest">Career Readiness</span>
-          </div>
-          <h2 className="text-xl font-black mb-4">Your CV is 65% Complete</h2>
-          
-          <div className="w-full bg-indigo-700 h-2 rounded-full mb-6">
-            <div className="bg-white h-full rounded-full" style={{ width: '65%' }} />
-          </div>
-          
-          <Link 
-            to="/cv-builder"
-            className="w-full py-3 bg-white text-indigo-600 rounded-xl text-xs font-bold flex items-center justify-center transition-all active:scale-95"
-          >
-            Continue Building
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Link>
-        </div>
-        <div className="absolute top-[-20%] right-[-10%] w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl" />
       </section>
 
       {/* Daily Habits */}

@@ -135,6 +135,39 @@ export default function Login() {
               <ArrowRight className="w-4 h-4 ml-2" />
             </button>
 
+            {!isForgotPassword && (
+              <div className="relative py-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-100"></div>
+                </div>
+                <div className="relative flex justify-center text-[10px] uppercase tracking-widest font-bold">
+                  <span className="bg-white px-4 text-slate-400">Or continue with</span>
+                </div>
+              </div>
+            )}
+
+            {!isForgotPassword && (
+              <button 
+                type="button"
+                onClick={async () => {
+                  setError('');
+                  setLoading(true);
+                  try {
+                    await loginWithGoogle();
+                  } catch (err: any) {
+                    setError(err.message || "Google login failed");
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                disabled={loading}
+                className="w-full py-4 bg-white border border-slate-100 text-slate-600 rounded-2xl font-bold flex items-center justify-center transition-all active:scale-95 hover:bg-slate-50 disabled:opacity-50"
+              >
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5 mr-3" alt="Google" />
+                Google
+              </button>
+            )}
+
             {!isSignUp && !isForgotPassword && (
               <div className="text-center">
                 <button 
