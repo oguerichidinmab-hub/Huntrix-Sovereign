@@ -166,7 +166,7 @@ export default function Profile() {
 
       <div className="text-center pt-8 pb-4">
         <p className="text-[10px] text-indigo-600 font-black uppercase tracking-[0.2em]">
-          Created by Team Mauntra
+          Created by Team Huntrix
         </p>
       </div>
 

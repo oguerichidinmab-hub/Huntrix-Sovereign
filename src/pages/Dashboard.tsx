@@ -295,7 +295,7 @@ export default function Dashboard() {
 
       <div className="text-center pt-4 pb-8">
         <p className="text-[10px] text-indigo-600 font-black uppercase tracking-[0.2em]">
-          Created by Team Mauntra
+          Created by Team Huntrix
         </p>
       </div>
     </div>

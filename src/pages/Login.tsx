@@ -212,7 +212,7 @@ export default function Login() {
               <span>Secure Student Authentication</span>
             </div>
             <p className="text-[10px] text-indigo-600 font-black uppercase tracking-[0.2em] mt-4">
-              Created by Team Mauntra
+              Created by Team Huntrix
             </p>
           </div>
         </div>
